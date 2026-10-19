@@ -87,15 +87,16 @@ body {
   flex: none;
   will-change: transform;
   filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5));
-  transform: translateY(calc(var(--card-h) * 0.95 - var(--env-h) + 44px))
-    scale(0.9);
+  /* no scale here: changing scale forces the heavy paper texture to be re-rasterized mid-animation */
+  transform: translateY(calc(var(--card-h) * 0.95 - var(--env-h) + 70px));
   transition: transform 1.1s var(--ease) 0.55s;
 }
+/* stays painted (almost invisible, hidden behind the envelope) so the paper texture is rendered before the animation starts, not during it */
 .pocket:not(.open) .card {
-  visibility: hidden;
+  opacity: 0.001;
 }
 .pocket.open .card {
-  transform: translateY(calc(var(--tuck) - var(--env-h))) scale(1);
+  transform: translateY(calc(var(--tuck) - var(--env-h)));
   pointer-events: auto;
   cursor: pointer;
 }
@@ -273,6 +274,14 @@ body {
   max-width: 17em;
   margin: 4px 0 0;
   text-wrap: balance;
+}
+
+/* the pocket grows while opening, which moves these parts by layout every frame; own compositor layers mean they are only moved, never repainted (their grain filters and shadows are expensive) */
+.env-back,
+.front,
+.deco,
+.seal {
+  will-change: transform;
 }
 
 /* once the card is out, the envelope fades away and only the card stays */
@@ -521,6 +530,7 @@ body {
   border-radius: 80% 0 80% 0;
   background: linear-gradient(135deg, #a8404f, #6b1c28);
   opacity: 0.9;
+  will-change: transform, opacity;
   animation: fall var(--dur) linear var(--delay) forwards;
 }
 

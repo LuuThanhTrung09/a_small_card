@@ -191,7 +191,6 @@
   function openLetter() {
     if (opened) return;
     opened = true;
-    sfxOpen();
     measure();
     stage.classList.add("open");
     pocket.classList.add("open");
@@ -199,6 +198,8 @@
     seal.setAttribute("tabindex", "-1");
     seal.setAttribute("aria-hidden", "true");
     hint.textContent = "";
+    // sound is built after the animation has started, so it never delays the first frames
+    setTimeout(sfxOpen, 0);
     setTimeout(
       function () {
         pocket.classList.add("leaving");
@@ -216,6 +217,8 @@
     );
   }
 
+  // create the AudioContext on touch-down, ~100ms before the click, so it costs nothing at open time
+  seal.addEventListener("pointerdown", audio, { once: true });
   seal.addEventListener("click", openLetter);
   card.addEventListener("click", function () {
     if (opened) {
