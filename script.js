@@ -11,7 +11,7 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var opened = false;
 
-  /* sound: synthesized with Web Audio, no audio files needed */
+  /* ---------- sound: realistic wax-sealed letter, synthesized with Web Audio ---------- */
   var ac = null;
   function audio() {
     try {
@@ -23,70 +23,144 @@
     } catch (e) {}
     return ac;
   }
-  // soft filtered noise = paper rustle
-  function rustle(start, dur, freq, q, vol) {
+  function rnd(a, b) {
+    return a + Math.random() * (b - a);
+  }
+  var swell = function (x) {
+    return Math.sin(Math.PI * x);
+  };
+  var snap = function (x) {
+    return Math.pow(1 - x, 3);
+  };
+
+  // Noise burst. With `density`, random sharp ticks that decay fast give the
+  // dry crinkle of paper; without it, plain noise (friction / snap).
+  function burst(o) {
     var a = audio();
     if (!a) return;
-    var len = Math.floor(a.sampleRate * dur);
+    var len = Math.floor(a.sampleRate * o.dur);
     var buf = a.createBuffer(1, len, a.sampleRate);
     var d = buf.getChannelData(0);
-    for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var lvl = 0;
+    for (var i = 0; i < len; i++) {
+      var env = o.shape ? o.shape(i / len) : 1;
+      if (o.density) {
+        if (Math.random() < o.density) lvl = Math.max(lvl, rnd(0.3, 1));
+        lvl *= o.decay || 0.993;
+        d[i] = (Math.random() * 2 - 1) * (lvl + (o.floor || 0)) * env;
+      } else {
+        d[i] = (Math.random() * 2 - 1) * env;
+      }
+    }
     var src = a.createBufferSource();
-    var f = a.createBiquadFilter();
     var g = a.createGain();
-    var t = a.currentTime + start;
+    var node = src;
     src.buffer = buf;
-    f.type = "bandpass";
-    f.frequency.value = freq;
-    f.Q.value = q;
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.25);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(f);
-    f.connect(g);
+    if (o.hp) {
+      var hp = a.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = o.hp;
+      node.connect(hp);
+      node = hp;
+    }
+    if (o.lp) {
+      var lp = a.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = o.lp;
+      node.connect(lp);
+      node = lp;
+    }
+    g.gain.value = o.vol;
+    node.connect(g);
     g.connect(a.destination);
-    src.start(t);
+    src.start(a.currentTime + (o.start || 0));
   }
-  // music-box style note
-  function tone(start, freq, dur, vol) {
+
+  // low, short "thump" under the crack (the body of the wax breaking)
+  function thump(start, vol) {
     var a = audio();
     if (!a) return;
     var t = a.currentTime + start;
-    [1, 2].forEach(function (mul, k) {
-      var o = a.createOscillator();
-      var g = a.createGain();
-      o.type = "sine";
-      o.frequency.value = freq * mul;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(vol / (k + 1), t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-      o.connect(g);
-      g.connect(a.destination);
-      o.start(t);
-      o.stop(t + dur + 0.05);
-    });
-  }
-  function sfxOpen() {
-    tone(0, 523, 0.18, 0.07); // seal click
-    rustle(0.05, 0.4, 1800, 0.8, 0.22); // flap lifts
-    rustle(0.6, 0.9, 900, 0.6, 0.16); // card slides out
-  }
-  function sfxChime() {
-    [784, 988, 1175, 1568].forEach(function (f, i) {
-      tone(i * 0.14, f, 1.6, 0.11);
-    });
-  }
-  function sfxTwinkle() {
-    var scale = [784, 880, 988, 1175, 1318, 1568];
-    for (var i = 0; i < 2; i++)
-      tone(
-        i * 0.12,
-        scale[Math.floor(Math.random() * scale.length)],
-        1.0,
-        0.07,
-      );
+    var o = a.createOscillator();
+    var g = a.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(230, t);
+    o.frequency.exponentialRampToValueAtTime(80, t + 0.07);
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+    o.connect(g);
+    g.connect(a.destination);
+    o.start(t);
+    o.stop(t + 0.1);
   }
 
+  // brittle wax seal cracking: sharp snap + a few little fragments
+  function sealCrack(t) {
+    burst({ start: t, dur: 0.035, vol: 0.55, hp: 2200, shape: snap });
+    thump(t, 0.3);
+    burst({
+      start: t,
+      dur: 0.14,
+      vol: 0.3,
+      density: 0.012,
+      decay: 0.985,
+      hp: 1800,
+      shape: snap,
+    });
+    [0.028, 0.062, 0.1].forEach(function (k) {
+      burst({
+        start: t + k,
+        dur: 0.016,
+        vol: rnd(0.15, 0.32),
+        hp: 3200,
+        shape: snap,
+      });
+    });
+  }
+
+  function sfxOpen() {
+    sealCrack(0);
+    // envelope flap peeling up: dry paper crinkle
+    burst({
+      start: 0.14,
+      dur: 0.55,
+      vol: 0.26,
+      density: 0.003,
+      decay: 0.994,
+      floor: 0.05,
+      hp: 1200,
+      lp: 7500,
+      shape: swell,
+    });
+    // card sliding out: soft paper-on-paper friction with light crinkle
+    burst({
+      start: 0.6,
+      dur: 1.0,
+      vol: 0.2,
+      density: 0.0015,
+      decay: 0.996,
+      floor: 0.12,
+      hp: 600,
+      lp: 4500,
+      shape: swell,
+    });
+    // card settling
+    burst({ start: 1.62, dur: 0.09, vol: 0.22, lp: 900, shape: snap });
+  }
+  function sfxTouch() {
+    burst({
+      dur: 0.35,
+      vol: 0.14,
+      density: 0.002,
+      decay: 0.994,
+      floor: 0.06,
+      hp: 1400,
+      lp: 6500,
+      shape: swell,
+    });
+  }
+
+  /* ---------- layout + petals + open animation ---------- */
   function measure() {
     pocket.style.setProperty("--card-h", card.offsetHeight + "px");
   }
@@ -96,7 +170,7 @@
     document.fonts.ready.then(measure);
   if (window.ResizeObserver) new ResizeObserver(measure).observe(card);
 
-  function burst() {
+  function burstPetals() {
     if (calm) return;
     for (var i = 0; i < 26; i++) {
       var p = document.createElement("span");
@@ -134,8 +208,7 @@
     setTimeout(
       function () {
         pocket.classList.add("done");
-        sfxChime();
-        burst();
+        burstPetals();
         note.hidden = false;
         hint.textContent = "Chạm vào thiệp để thả thêm hoa";
       },
@@ -146,8 +219,8 @@
   seal.addEventListener("click", openLetter);
   card.addEventListener("click", function () {
     if (opened) {
-      sfxTwinkle();
-      burst();
+      sfxTouch();
+      burstPetals();
     }
   });
 })();
