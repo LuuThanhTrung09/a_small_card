@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Thiệp 20/10</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <filter
+          id="paperFx"
+          x="-6%"
+          y="-4%"
+          width="112%"
+          height="108%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.02"
+            numOctaves="2"
+            seed="5"
+            result="warp"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="warp"
+            scale="12"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="d1"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.4"
+            numOctaves="2"
+            seed="11"
+            result="fiber"
+          />
+          <feDisplacementMap
+            in="d1"
+            in2="fiber"
+            scale="3"
+            xChannelSelector="G"
+            yChannelSelector="R"
+            result="shape"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.22"
+            numOctaves="3"
+            seed="2"
+            result="grain"
+          />
+          <feDiffuseLighting
+            in="grain"
+            surfaceScale="0.9"
+            diffuseConstant="1.18"
+            lighting-color="#ffffff"
+            result="light"
+          >
+            <feDistantLight azimuth="55" elevation="60" />
+          </feDiffuseLighting>
+          <feBlend in="shape" in2="light" mode="multiply" result="lit" />
+          <feComposite in="lit" in2="shape" operator="in" />
+        </filter>
+        <filter
+          id="rimFx"
+          x="-6%"
+          y="-4%"
+          width="112%"
+          height="108%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.022"
+            numOctaves="2"
+            seed="17"
+            result="warp"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="warp"
+            scale="13"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="d1"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.4"
+            numOctaves="2"
+            seed="3"
+            result="fiber"
+          />
+          <feDisplacementMap
+            in="d1"
+            in2="fiber"
+            scale="4"
+            xChannelSelector="G"
+            yChannelSelector="R"
+          />
+        </filter>
+        <filter
+          id="envGrain"
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          color-interpolation-filters="sRGB"
+        >
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="1.1"
+            numOctaves="2"
+            seed="4"
+            result="n"
+          />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0.14 0 0 0 0.86  0.14 0 0 0 0.86  0.14 0 0 0 0.86  0 0 0 0 1"
+            result="g"
+          />
+          <feBlend in="SourceGraphic" in2="g" mode="multiply" result="b" />
+          <feComposite in="b" in2="SourceAlpha" operator="in" />
+        </filter>
+        <pattern
+          id="envPat"
+          width="28"
+          height="28"
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d="M14 8.5 L15.5 12.5 L19.5 14 L15.5 15.5 L14 19.5 L12.5 15.5 L8.5 14 L12.5 12.5Z"
+            fill="#e6c9a2"
+            fill-opacity="0.13"
+          />
+          <circle cx="0" cy="0" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
+          <circle cx="28" cy="0" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
+          <circle cx="0" cy="28" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
+          <circle cx="28" cy="28" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
+        </pattern>
+        <symbol id="bloom" viewBox="0 0 20 20">
+          <g fill="currentColor">
+            <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(72 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(144 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(216 10 10)"
+            />
+            <ellipse
+              cx="10"
+              cy="4.6"
+              rx="2.6"
+              ry="4.2"
+              transform="rotate(288 10 10)"
+            />
+          </g>
+          <circle cx="10" cy="10" r="2" fill="#efe8d6" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <main class="stage" id="stage">
+      <div class="pocket" id="pocket">
+        <div class="env-back"></div>
+
+        <div class="slot">
+          <article class="card" id="card" aria-hidden="true">
+            <div class="rim"></div>
+            <div class="paper"></div>
+            <div class="sheet">
+              <h1 class="kicker">Gửi người đặc biệt</h1>
+              <p class="eyebrow">CHÚC MỪNG NGÀY</p>
+              <p class="big">PHỤ NỮ VIỆT NAM</p>
+              <div class="divider" aria-hidden="true"><i></i></div>
+              <p class="date-script">20 · 10</p>
+              <p class="date-line">Thứ Ba, 20 tháng 10, 2026</p>
+              <ul class="wishes">
+                <li>
+                  <svg aria-hidden="true"><use href="#bloom" /></svg
+                  ><b>NỤ CƯỜI</b
+                  ><span>Chúc chị luôn vui vẻ, cười thật nhiều</span>
+                </li>
+                <li>
+                  <svg aria-hidden="true"><use href="#bloom" /></svg
+                  ><b>SỨC KHỎE</b
+                  ><span>Chúc chị luôn khỏe, làm gì cũng thuận lợi</span>
+                </li>
+                <li>
+                  <svg aria-hidden="true"><use href="#bloom" /></svg
+                  ><b>BÌNH YÊN</b
+                  ><span>Chúc chị mọi việc suôn sẻ, bớt phải lo nghĩ</span>
+                </li>
+              </ul>
+              <p class="closing">
+                Chúc chị có một ngày 20/10 thật vui và nhận được thật nhiều hoa.
+              </p>
+            </div>
+          </article>
+        </div>
+
+        <svg
+          class="front"
+          viewBox="0 0 400 270"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="frontL" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7a2230" />
+              <stop offset="1" stop-color="#5a1722" />
+            </linearGradient>
+            <linearGradient id="frontR" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#5e1824" />
+              <stop offset="1" stop-color="#430f19" />
+            </linearGradient>
+            <linearGradient id="frontB" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#4d121b" />
+              <stop offset="1" stop-color="#340a11" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#envGrain)">
+            <polygon points="0,0 200,150 0,270" fill="url(#frontL)" />
+            <polygon points="400,0 200,150 400,270" fill="url(#frontR)" />
+            <polygon points="0,270 200,150 400,270" fill="url(#frontB)" />
+            <polygon points="0,0 200,150 0,270" fill="url(#envPat)" />
+            <polygon points="400,0 200,150 400,270" fill="url(#envPat)" />
+            <polygon points="0,270 200,150 400,270" fill="url(#envPat)" />
+          </g>
+          <path
+            d="M9 9 V261 H391 V9"
+            fill="none"
+            stroke="#cdb98e"
+            stroke-opacity="0.5"
+            stroke-width="1"
+            stroke-dasharray="4 4"
+            vector-effect="non-scaling-stroke"
+          />
+          <polyline
+            points="0,0 200,150 400,0"
+            fill="none"
+            stroke="rgba(255,190,170,0.13)"
+            stroke-width="1"
+          />
+          <polyline
+            points="0,270 200,150 400,270"
+            fill="none"
+            stroke="rgba(255,190,170,0.08)"
+            stroke-width="1"
+          />
+        </svg>
+
+        <div class="deco" aria-hidden="true">
+          <svg class="sprig sprig-l" viewBox="0 0 64 150">
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linecap="round"
+            >
+              <path d="M26 148 C 22 120 38 100 30 74 C 24 54 36 34 34 14" />
+              <path d="M28 126 C 19 120 13 112 11 103" />
+              <path d="M31 92 C 42 86 50 78 53 67" />
+              <path d="M30 64 C 23 58 18 50 18 41" />
+            </g>
+            <g fill="currentColor" fill-opacity="0.8">
+              <ellipse
+                cx="17"
+                cy="136"
+                rx="3"
+                ry="7"
+                transform="rotate(-58 17 136)"
+              />
+              <ellipse
+                cx="35"
+                cy="120"
+                rx="3"
+                ry="7"
+                transform="rotate(58 35 120)"
+              />
+              <ellipse
+                cx="22"
+                cy="86"
+                rx="3"
+                ry="7"
+                transform="rotate(-58 22 86)"
+              />
+              <ellipse
+                cx="41"
+                cy="104"
+                rx="3"
+                ry="7"
+                transform="rotate(55 41 104)"
+              />
+              <ellipse
+                cx="40"
+                cy="50"
+                rx="3"
+                ry="6.5"
+                transform="rotate(58 40 50)"
+              />
+              <ellipse
+                cx="27"
+                cy="28"
+                rx="2.8"
+                ry="6"
+                transform="rotate(-55 27 28)"
+              />
+            </g>
+            <use href="#bloom" x="23" y="3" width="22" height="22" />
+            <use href="#bloom" x="2" y="94" width="17" height="17" />
+            <use href="#bloom" x="44" y="58" width="17" height="17" />
+            <use href="#bloom" x="11" y="33" width="14" height="14" />
+          </svg>
+          <svg class="sprig sprig-r" viewBox="0 0 64 150">
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linecap="round"
+            >
+              <path d="M26 148 C 22 120 38 100 30 74 C 24 54 36 34 34 14" />
+              <path d="M28 126 C 19 120 13 112 11 103" />
+              <path d="M31 92 C 42 86 50 78 53 67" />
+              <path d="M30 64 C 23 58 18 50 18 41" />
+            </g>
+            <g fill="currentColor" fill-opacity="0.8">
+              <ellipse
+                cx="17"
+                cy="136"
+                rx="3"
+                ry="7"
+                transform="rotate(-58 17 136)"
+              />
+              <ellipse
+                cx="35"
+                cy="120"
+                rx="3"
+                ry="7"
+                transform="rotate(58 35 120)"
+              />
+              <ellipse
+                cx="22"
+                cy="86"
+                rx="3"
+                ry="7"
+                transform="rotate(-58 22 86)"
+              />
+              <ellipse
+                cx="41"
+                cy="104"
+                rx="3"
+                ry="7"
+                transform="rotate(55 41 104)"
+              />
+              <ellipse
+                cx="40"
+                cy="50"
+                rx="3"
+                ry="6.5"
+                transform="rotate(58 40 50)"
+              />
+              <ellipse
+                cx="27"
+                cy="28"
+                rx="2.8"
+                ry="6"
+                transform="rotate(-55 27 28)"
+              />
+            </g>
+            <use href="#bloom" x="23" y="3" width="22" height="22" />
+            <use href="#bloom" x="2" y="94" width="17" height="17" />
+            <use href="#bloom" x="44" y="58" width="17" height="17" />
+            <use href="#bloom" x="11" y="33" width="14" height="14" />
+          </svg>
+          <div class="deco-to">
+            <p>Dành tặng chị</p>
+            <div class="deco-rule"><b></b></div>
+          </div>
+        </div>
+
+        <svg
+          class="flap"
+          viewBox="0 0 400 150"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="flapOut" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#6e1e2c" />
+              <stop offset="1" stop-color="#561520" />
+            </linearGradient>
+            <linearGradient id="flapIn" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2a080d" />
+              <stop offset="1" stop-color="#43101a" />
+            </linearGradient>
+          </defs>
+          <g filter="url(#envGrain)">
+            <polygon
+              class="face-out"
+              points="0,0 400,0 200,150"
+              fill="url(#flapOut)"
+            />
+            <polygon
+              class="face-in"
+              points="0,0 400,0 200,150"
+              fill="url(#flapIn)"
+            />
+            <polygon
+              class="face-out"
+              points="0,0 400,0 200,150"
+              fill="url(#envPat)"
+            />
+          </g>
+          <polyline
+            class="face-out"
+            points="25.7,8 200,138.75 374.3,8"
+            fill="none"
+            stroke="#cdb98e"
+            stroke-opacity="0.5"
+            stroke-width="1"
+            stroke-dasharray="4 4"
+            vector-effect="non-scaling-stroke"
+          />
+          <polyline
+            points="0,0 200,150 400,0"
+            fill="none"
+            stroke="rgba(255,190,170,0.14)"
+            stroke-width="1"
+          />
+        </svg>
+
+        <button
+          class="seal"
+          id="seal"
+          type="button"
+          aria-label="Chạm vào dấu sáp để mở thư"
+        >
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <radialGradient id="bronze" cx="36%" cy="30%" r="80%">
+                <stop offset="0" stop-color="#bfab83" />
+                <stop offset="0.55" stop-color="#93805a" />
+                <stop offset="1" stop-color="#5f4f37" />
+              </radialGradient>
+              <radialGradient id="bronzeIn" cx="42%" cy="36%" r="75%">
+                <stop offset="0" stop-color="#a8946b" />
+                <stop offset="1" stop-color="#7a6847" />
+              </radialGradient>
+            </defs>
+            <path
+              d="M96.8 50.0 L96.4 54.1 L94.5 57.9 L92.5 61.4 L90.9 64.9 L89.4 68.4 L87.3 71.6 L84.5 74.1 L81.3 76.3 L78.8 78.8 L77.1 82.2 L75.4 86.3 L72.9 89.7 L69.2 91.2 L64.7 90.4 L60.4 88.7 L56.7 87.8 L53.4 88.8 L50.0 91.1 L46.2 93.3 L42.2 94.1 L38.4 93.2 L34.8 91.7 L31.3 90.2 L27.6 88.8 L24.2 86.8 L21.7 83.8 L20.1 79.9 L18.7 76.2 L16.5 73.5 L12.9 71.4 L8.8 69.2 L5.8 66.1 L5.2 62.0 L6.9 57.6 L9.3 53.6 L10.8 50.0 L10.8 46.6 L9.8 42.9 L9.4 39.1 L10.0 35.5 L11.5 32.0 L12.9 28.6 L14.0 24.8 L15.5 21.0 L18.0 18.0 L21.8 16.4 L26.1 15.9 L29.9 15.2 L32.8 13.2 L35.3 9.6 L38.1 5.6 L41.7 3.1 L45.9 3.1 L50.0 5.1 L53.7 7.7 L57.2 9.4 L60.7 10.2 L64.2 10.9 L67.6 12.3 L70.6 14.3 L73.5 16.4 L77.0 17.9 L80.9 19.1 L84.6 21.0 L87.0 24.1 L87.4 28.4 L86.8 32.9 L86.6 36.7 L88.3 39.7 L91.6 42.7 L95.0 46.1 Z"
+              fill="url(#bronze)"
+              stroke="#54442e"
+              stroke-width="1.2"
+              stroke-linejoin="round"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="33"
+              fill="url(#bronzeIn)"
+              stroke="#5b4b33"
+              stroke-width="1.4"
+            />
+            <circle
+              cx="50"
+              cy="50"
+              r="31"
+              fill="none"
+              stroke="#cdb98e"
+              stroke-opacity="0.45"
+              stroke-width="1"
+            />
+            <g
+              class="monogram"
+              font-family="'Great Vibes', 'Snell Roundhand', cursive"
+              font-size="58"
+              text-anchor="middle"
+            >
+              <text x="49.2" y="65.2" fill="#e0cfa6" fill-opacity="0.6">D</text>
+              <text x="50.4" y="66.4" fill="#4f4029">D</text>
+            </g>
+          </svg>
+        </button>
+      </div>
+
+      <p class="hint" id="hint">
+        Có một lá thư gửi chị. Chạm vào dấu sáp để mở.
+      </p>
+
+      <section class="note" id="note" hidden aria-live="polite">
+        <div class="rim"></div>
+        <div class="paper"></div>
+        <div class="inner">
+          <h2>Vài lời của em</h2>
+          <p>
+            Em không giỏi viết lời hoa mỹ, chỉ muốn nói là em rất quý chị. Chúc
+            chị một ngày thật vui nhé.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div class="petals" id="petals" aria-hidden="true"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

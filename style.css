@@ -1,0 +1,553 @@
+/* Layout: a matte burgundy envelope on a near-black ground, closed with a bronze heart seal. Tapping the seal lifts the flap, a deckled handmade card slides out and the envelope fades away. */
+:root {
+  --night: #19060a;
+  --night-hi: #2b0b12;
+  --wine: #5c1823;
+  --paper: #f1ebd9;
+  --rim: #faf6ec;
+  --ink: #3a0e18;
+  --bronze-hi: #cdb98e;
+  --env-h: 270px;
+  --tuck: 60px;
+  --card-h: 640px;
+  --script: "Great Vibes", "Dancing Script", cursive;
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --ease: cubic-bezier(0.3, 0.7, 0.2, 1);
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  min-height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--night)
+    radial-gradient(ellipse at 50% 10%, var(--night-hi) 0%, var(--night) 72%);
+  color: var(--paper);
+  font-family: var(--serif);
+  padding-block: 32px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+.stage {
+  width: 100%;
+  max-width: 420px;
+  margin: clamp(8px, 12vh, 110px) auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  transition: margin-top 1.1s var(--ease) 0.5s;
+}
+.stage.open {
+  margin-top: 0;
+}
+
+/* the envelope and the card share one box that grows when the card comes out */
+.pocket {
+  position: relative;
+  height: var(--env-h);
+  transition: height 1.1s var(--ease) 0.55s;
+}
+.pocket.open {
+  height: calc(var(--card-h) + var(--env-h) - var(--tuck));
+}
+
+.env-back {
+  position: absolute;
+  z-index: 0;
+  left: -14px;
+  right: -14px;
+  bottom: 0;
+  height: var(--env-h);
+  background: linear-gradient(180deg, #230709 0%, #3a0d15 100%);
+  border-radius: 3px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.slot {
+  position: absolute;
+  z-index: 1;
+  left: -40px;
+  right: -40px;
+  bottom: 0;
+  height: calc(var(--card-h) + 260px);
+  padding: 0 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.card {
+  position: relative;
+  flex: none;
+  will-change: transform;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5));
+  transform: translateY(calc(var(--card-h) * 0.95 - var(--env-h) + 44px))
+    scale(0.9);
+  transition: transform 1.1s var(--ease) 0.55s;
+}
+.pocket:not(.open) .card {
+  visibility: hidden;
+}
+.pocket.open .card {
+  transform: translateY(calc(var(--tuck) - var(--env-h))) scale(1);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* handmade paper: a pale deckled rim under a cream, grainy sheet */
+.rim,
+.paper {
+  position: absolute;
+}
+.rim {
+  inset: -4px;
+  background: var(--rim);
+  filter: url(#rimFx);
+}
+.paper {
+  inset: 0;
+  background: var(--paper);
+  filter: url(#paperFx);
+}
+
+.sheet {
+  position: relative;
+  padding: 44px 30px 46px;
+  color: var(--ink);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.kicker {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 11.5vw, 3.3rem);
+  line-height: 1.05;
+  margin: 0;
+}
+.eyebrow {
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  margin: 6px 0 0;
+}
+.big {
+  font-weight: 600;
+  font-size: clamp(1.7rem, 8vw, 2.25rem);
+  letter-spacing: 0.08em;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 78%;
+  color: var(--ink);
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+.divider i {
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  transform: rotate(45deg);
+  display: block;
+}
+.date-script {
+  font-family: var(--script);
+  font-size: clamp(2.2rem, 10vw, 2.9rem);
+  line-height: 1;
+  margin: 0;
+}
+.date-line {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin: -6px 0 0;
+}
+.wishes {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.wishes li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.wishes svg {
+  width: 16px;
+  height: 16px;
+  color: #8a3040;
+}
+.wishes b {
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.2em;
+}
+.wishes span {
+  font-size: 1.22rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.closing {
+  font-weight: 500;
+  font-size: 1.28rem;
+  line-height: 1.35;
+  max-width: 17em;
+  margin: 4px 0 0;
+  text-wrap: balance;
+}
+
+/* once the card is out, the envelope fades away and only the card stays */
+.env-back,
+.front,
+.deco,
+.flap {
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.pocket.leaving .env-back,
+.pocket.leaving .front,
+.pocket.leaving .deco,
+.pocket.leaving .flap {
+  opacity: 0;
+}
+.pocket.leaving .env-back,
+.pocket.leaving .front,
+.pocket.leaving .deco {
+  transform: translateY(36px);
+}
+.pocket.done {
+  height: auto;
+  transition: none;
+}
+.pocket.done .slot {
+  position: static;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+}
+.pocket.done .card {
+  transform: none;
+  transition: none;
+}
+.pocket.done .env-back,
+.pocket.done .front,
+.pocket.done .deco,
+.pocket.done .flap,
+.pocket.done .seal {
+  display: none;
+}
+
+.front {
+  position: absolute;
+  z-index: 2;
+  left: -14px;
+  bottom: 0;
+  width: calc(100% + 28px);
+  height: var(--env-h);
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 -3px 8px rgba(0, 0, 0, 0.4));
+}
+/* gold foil details printed on the front of the envelope: two blossom sprigs and a dedication under the seal */
+.deco {
+  position: absolute;
+  z-index: 2;
+  left: -14px;
+  bottom: 0;
+  width: calc(100% + 28px);
+  height: var(--env-h);
+  pointer-events: none;
+  color: var(--bronze-hi);
+}
+.sprig {
+  position: absolute;
+  bottom: 14px;
+  width: 54px;
+  height: auto;
+  display: block;
+  opacity: 0.85;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35));
+}
+.sprig-l {
+  left: 18px;
+}
+.sprig-r {
+  right: 18px;
+  transform: scaleX(-1);
+}
+.deco-to {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  text-align: center;
+}
+.deco-to p {
+  margin: 0;
+  font-family: var(--script);
+  font-size: clamp(1.5rem, 6.4vw, 1.9rem);
+  line-height: 1.1;
+  color: var(--bronze-hi);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+}
+.deco-rule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 46%;
+  margin: 4px auto 0;
+  opacity: 0.65;
+}
+.deco-rule::before,
+.deco-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.deco-rule b {
+  width: 5px;
+  height: 5px;
+  background: currentColor;
+  transform: rotate(45deg);
+  display: block;
+  flex: none;
+}
+
+.flap {
+  position: absolute;
+  z-index: 3;
+  left: -14px;
+  bottom: calc(var(--env-h) - 150px);
+  width: calc(100% + 28px);
+  height: 150px;
+  display: block;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.4));
+}
+.flap .face-in {
+  opacity: 0;
+  transition: opacity 0.2s linear 0.35s;
+}
+.flap .face-out {
+  transition: opacity 0.2s linear 0.35s;
+}
+.pocket.open .flap {
+  animation: flap-open 0.8s ease-in-out forwards;
+}
+.pocket.open .flap .face-in {
+  opacity: 1;
+}
+.pocket.open .flap .face-out {
+  opacity: 0;
+}
+
+.seal {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 78px;
+  width: 84px;
+  height: 84px;
+  margin-left: -42px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 50%;
+  filter: drop-shadow(0 5px 7px rgba(0, 0, 0, 0.55));
+  transition: transform 0.25s ease;
+}
+.seal svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.seal:hover {
+  transform: scale(1.05) rotate(-3deg);
+}
+.seal:focus-visible {
+  outline: 3px solid var(--bronze-hi);
+  outline-offset: 4px;
+}
+.seal::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(205, 185, 142, 0.5);
+  animation: pulse 2.4s ease-out infinite;
+}
+.pocket.open .seal {
+  pointer-events: none;
+  animation: seal-away 0.5s ease forwards;
+}
+.pocket.open .seal::after {
+  animation: none;
+}
+
+.hint {
+  text-align: center;
+  font-size: 0.98rem;
+  letter-spacing: 0.06em;
+  color: rgba(239, 232, 214, 0.72);
+  margin: 0;
+}
+
+.note {
+  position: relative;
+  color: var(--ink);
+  text-align: center;
+  animation: rise 0.7s ease both;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5));
+}
+.note[hidden] {
+  display: none !important;
+}
+.note .inner {
+  position: relative;
+  padding: 30px 28px 32px;
+}
+.note h2 {
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+.note p {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 20;
+}
+.petal {
+  position: absolute;
+  top: -24px;
+  width: 14px;
+  height: 18px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #a8404f, #6b1c28);
+  opacity: 0.9;
+  animation: fall var(--dur) linear var(--delay) forwards;
+}
+
+@keyframes flap-open {
+  0% {
+    transform: perspective(1100px) rotateX(0deg);
+    z-index: 3;
+  }
+  49% {
+    z-index: 3;
+  }
+  50% {
+    z-index: 0;
+  }
+  100% {
+    transform: perspective(1100px) rotateX(180deg);
+    z-index: 0;
+  }
+}
+@keyframes seal-away {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  35% {
+    transform: scale(1.18) translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5) translateY(-30px);
+    opacity: 0;
+  }
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(205, 185, 142, 0.5);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 20px rgba(205, 185, 142, 0);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(var(--drift), 108vh, 0) rotate(var(--spin));
+    opacity: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .pocket,
+  .card,
+  .seal,
+  .env-back,
+  .front,
+  .deco,
+  .flap,
+  .flap .face-in,
+  .flap .face-out {
+    transition: none;
+  }
+  .pocket.open .flap,
+  .pocket.open .seal,
+  .note {
+    animation-duration: 0.01s;
+  }
+  .seal::after {
+    animation: none;
+  }
+}
