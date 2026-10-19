@@ -151,6 +151,64 @@
           <circle cx="0" cy="28" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
           <circle cx="28" cy="28" r="1.1" fill="#e6c9a2" fill-opacity="0.12" />
         </pattern>
+        <symbol id="corner" viewBox="0 0 64 64">
+          <g
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.1"
+            stroke-linecap="round"
+          >
+            <path d="M3 62 V24 C3 12 12 3 24 3 H62" />
+            <path d="M9 62 V28 C9 18 18 9 28 9 H62" opacity="0.5" />
+            <path d="M24 3 C24 15 15 24 3 24" opacity="0.7" />
+            <path d="M34 14 C28 14 24 18 24 24 C30 24 34 20 34 14Z" />
+            <path d="M14 34 C14 28 18 24 24 24 C24 30 20 34 14 34Z" />
+            <path d="M40 3 C44 9 50 11 56 9" opacity="0.7" />
+            <path d="M3 40 C9 44 11 50 9 56" opacity="0.7" />
+          </g>
+          <g fill="currentColor" fill-opacity="0.85">
+            <circle cx="46" cy="9" r="1.4" />
+            <circle cx="9" cy="46" r="1.4" />
+          </g>
+          <use href="#bloom" x="4" y="4" width="17" height="17" />
+        </symbol>
+        <pattern
+          id="cardPat"
+          width="64"
+          height="64"
+          patternUnits="userSpaceOnUse"
+        >
+          <g fill="currentColor">
+            <use href="#bloom" x="22" y="22" width="20" height="20" />
+            <circle cx="0" cy="0" r="1.6" />
+            <circle cx="64" cy="0" r="1.6" />
+            <circle cx="0" cy="64" r="1.6" />
+            <circle cx="64" cy="64" r="1.6" />
+          </g>
+          <path
+            d="M32 4 L35 11 L32 18 L29 11Z M32 46 L35 53 L32 60 L29 53Z M4 32 L11 29 L18 32 L11 35Z M46 32 L53 29 L60 32 L53 35Z"
+            fill="currentColor"
+            fill-opacity="0.6"
+          />
+        </pattern>
+        <symbol id="flourish" viewBox="0 0 200 24">
+          <g
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.1"
+            stroke-linecap="round"
+          >
+            <path d="M92 12 H20 C12 12 8 8 8 4" />
+            <path d="M92 12 H34" opacity="0.5" />
+            <path d="M108 12 H180 C188 12 192 8 192 4" />
+            <path d="M108 12 H166" opacity="0.5" />
+            <path d="M60 12 C56 5 48 5 46 11 C50 14 57 14 60 12Z" />
+            <path d="M140 12 C144 5 152 5 154 11 C150 14 143 14 140 12Z" />
+            <path d="M8 20 C8 17 10 15 13 15" />
+            <path d="M192 20 C192 17 190 15 187 15" />
+          </g>
+          <use href="#bloom" x="88" y="2" width="24" height="24" />
+        </symbol>
         <symbol id="bloom" viewBox="0 0 20 20">
           <g fill="currentColor">
             <ellipse cx="10" cy="4.6" rx="2.6" ry="4.2" />
@@ -197,6 +255,15 @@
             <div class="rim"></div>
             <div class="paper"></div>
             <div class="sheet">
+              <svg class="watermark" aria-hidden="true">
+                <rect width="100%" height="100%" fill="url(#cardPat)" />
+              </svg>
+              <div class="frame" aria-hidden="true">
+                <svg class="corner c-tl"><use href="#corner" /></svg>
+                <svg class="corner c-tr"><use href="#corner" /></svg>
+                <svg class="corner c-bl"><use href="#corner" /></svg>
+                <svg class="corner c-br"><use href="#corner" /></svg>
+              </div>
               <h1 class="kicker">Gửi người đặc biệt</h1>
               <p class="eyebrow">CHÚC MỪNG NGÀY</p>
               <p class="big">PHỤ NỮ VIỆT NAM</p>
@@ -223,6 +290,9 @@
               <p class="closing">
                 Chúc chị có một ngày 20/10 thật vui và nhận được thật nhiều hoa.
               </p>
+              <svg class="flourish" aria-hidden="true">
+                <use href="#flourish" />
+              </svg>
             </div>
           </article>
         </div>
